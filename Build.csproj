@@ -1,0 +1,189 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Condition="$(Configuration.Equals('Release'))">
+    <!-- Assembly name prefix (should be the name of the program) -->
+    <PrefixAssembly>ToggleFilters</PrefixAssembly>
+    <Configurations>Release</Configurations>
+    <OutputPath>./build/Release</OutputPath>
+    <DefineConstants>$(DefineConstants);RELEASE;TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.Equals('Debug'))">
+    <!-- Assembly name prefix (should be the name of the program) -->
+    <PrefixAssembly>ToggleFilters_Debug</PrefixAssembly>
+    <Configurations>Debug</Configurations>
+    <OutputPath>./build/Debug</OutputPath>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultItems>false</EnableDefaultItems>
+	  <OutputType>Library</OutputType>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RevitYearArg.Contains('2018'))">
+    <LangVersion>8.0</LangVersion>
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK47</DefineConstants>
+    <TargetFramework>net46</TargetFramework>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RevitVersion>2018</RevitVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RevitYearArg.Contains('2019'))">
+    <LangVersion>8.0</LangVersion>
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK47</DefineConstants>
+    <TargetFramework>net47</TargetFramework>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <RevitVersion>2019</RevitVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RevitYearArg.Contains('2020'))">
+    <LangVersion>8.0</LangVersion>
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK47</DefineConstants>
+    <TargetFramework>net47</TargetFramework>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <RevitVersion>2020</RevitVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="$(RevitYearArg.Contains('2021'))">
+    <LangVersion>8.0</LangVersion>
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK47</DefineConstants>
+    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <RevitVersion>2021</RevitVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == '' ">
+    <LangVersion>8.0</LangVersion>
+    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <RevitVersion>2021</RevitVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- defines conditional directive REVIT2016, REVIT2017 ... --> 
+    <DefineConstants>$(DefineConstants);REVIT$(RevitVersion)</DefineConstants> 
+    <AssemblyName>$(PrefixAssembly)_$(RevitVersion)</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Path_DLL_API>.\refs</Path_DLL_API>
+  </PropertyGroup>
+
+
+  <!--//////////////////////////////////////////-->
+  <!-- all other stuff that is project specific -->
+  <!--//////////////////////////////////////////-->
+  
+  <ItemGroup>
+    
+    <Compile Include="*.cs"/>
+    <Compile Include="./commands/*.cs"/>
+    <Compile Include="./libs/*.cs"/>
+    <Compile Include="./libs/*/*.cs"/>
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <Reference Include="RevitAPI">
+      <HintPath>$(Path_DLL_API)\$(RevitVersion)\RevitAPI.dll</HintPath>
+    </Reference>
+
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(Path_DLL_API)\$(RevitVersion)\RevitAPIUI.dll</HintPath>
+    </Reference>
+    
+    <Reference Include="EPPlus">
+      <HintPath>.\refs\EPPlus.dll</HintPath>
+    </Reference>
+    
+
+    <Reference Include="System"/>
+    <Reference Include="System.Data"/>
+    <Reference Include="System.Windows.Forms"/>
+    <Reference Include="System.Drawing"/>
+    <Reference Include="System.Management"/>
+    <Reference Include="System.Runtime.Serialization"/>
+    <Reference Include="System.Runtime.Serialization.Json"/>
+    <Reference Include="System.Xaml"/>
+    <Reference Include="System.Xml"/>
+    <Reference Include="WindowsBase"/>
+    <Reference Include="PresentationCore"/>
+    <Reference Include="PresentationFramework"/>
+    <Reference Include="./packages/System.Windows.Interactivity.WPF.2.0.20525/lib/net40/System.Windows.Interactivity.dll"/>
+    <Reference Include="./packages/Newtonsoft.Json.13.0.1/lib/net45/Newtonsoft.Json.dll"/>
+    <Reference Include="./packages/morelinq.3.3.2/lib/net451/MoreLinq.dll"/>
+  </ItemGroup>
+
+  <!-- REFERENCE ValueTuple 4.0 on the 4.0 framework -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net46' ">
+    <Reference Include="./packages/System.ValueTuple.4.4.0/lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll"/>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46' ">
+    <Reference Include="./packages/System.ValueTuple.4.4.0/lib/net47/System.ValueTuple.dll"/>
+  </ItemGroup>
+
+  <Target Name="ILRepack" AfterTargets="Build">
+    <Message Importance="high" Text="Compacting DLLs with ILRepack"  />
+
+    <ItemGroup>
+      <_MergeItem Include="build/$(Configuration)/$(TargetFramework)\MoreLinq.dll" />
+      <_MergeItem Include="build/$(Configuration)/$(TargetFramework)\Newtonsoft.Json.dll" />
+      <_MergeItem Include="build/$(Configuration)/$(TargetFramework)\$(AssemblyName).dll" />
+    </ItemGroup>
+
+    <CreateItem Include="build/$(Configuration)/$(TargetFramework)/$(AssemblyName).dll">
+      <Output TaskParameter="Include" ItemName="AssembliesToMerge" />
+    </CreateItem>
+
+    <CreateItem Include="build/$(Configuration)/$(TargetFramework)/MoreLinq.dll">
+      <Output TaskParameter="Include" ItemName="AssembliesToMerge" />
+    </CreateItem>
+
+    <CreateItem Include="build/$(Configuration)/$(TargetFramework)/Newtonsoft.Json.dll">
+      <Output TaskParameter="Include" ItemName="AssembliesToMerge" />
+    </CreateItem>
+
+    <Message Text="AssembliesToMerge= @(AssembliesToMerge -> '&quot;%(Fullpath)&quot;', ' ')" />
+    <Message Text="TargetFileName= $(TargetFileName)" />
+
+    <Error
+      Text="ILMerge cannot be found. You need to download and install ILMerge in order to build DotNetZip."
+      Condition="!Exists('packages\ILRepack.2.0.18\tools\ILRepack.exe')" />
+
+    <Exec Command="packages\ILRepack.2.0.18\tools\ILRepack.exe /lib:build/$(Configuration)/$(TargetFramework) /xmldocs /out:build/$(Configuration)/$(TargetFramework)/merge/$(TargetFileName)  @(AssembliesToMerge -> '%(Fullpath)', ' ') " />
+  </Target>
+
+
+  <!-- Copy files post build target -->
+  <Target Name="CopyFilesAfterBuild" AfterTargets="ILRepack">
+    <ItemGroup>
+      <_CopyItems Include="build\$(Configuration)\$(TargetFramework)\merge\*.*" />
+      <_CopyItems Include="build\$(Configuration)\$(TargetFramework)\RevitAPI*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_CopyItems)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\MarathonScripts\$(PrefixAssembly)"
+	  SkipUnchangedFiles="false" OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)" />
+
+    <ItemGroup>
+      <_CopyItems_2 Include=".\default_labor_dictionary.json" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_CopyItems_2)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\MarathonScripts\$(PrefixAssembly)\settings\labor"
+	  SkipUnchangedFiles="false" OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)" />
+
+    <ItemGroup>
+      <_CopyItems_3 Include=".\families\*.rfa" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_CopyItems_3)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\MarathonScripts\$(PrefixAssembly)\settings\families"
+	  SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+  </Target>
+</Project>

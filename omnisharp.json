@@ -1,0 +1,15 @@
+{
+    "fileOptions": {
+        "userExcludeSearchPatterns": [
+            "build",
+            "obj",
+            ".vscode",
+            ".emacs",
+            "markdown-assets",
+            "packages",
+            "refs",
+            "*.pdf",
+            "*.docx"
+        ]
+    }
+}

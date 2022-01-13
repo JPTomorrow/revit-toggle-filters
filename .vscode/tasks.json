@@ -1,0 +1,119 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        { // build for revit 2018
+            "label": "b2018",
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
+                "-r",
+                "/v:q",
+                "Build.csproj",
+                "/t:Build",
+                "/p:Configuration=Release",
+                "/p:Platform=x64",
+                "/p:RevitYearArg=2018",
+                "/property:GenerateFullPaths=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        { // build for revit 2019
+            "label": "b2019",
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
+                "-r",
+                "/v:q",
+                "Build.csproj",
+                "/t:Build",
+                "/p:Configuration=Release",
+                "/p:Platform=x64",
+                "/p:RevitYearArg=2019",
+                "/property:GenerateFullPaths=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        { // build for revit 2020 release
+            "label": "b2020r",
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
+                "-r",
+                "/v:q",
+                "Build.csproj",
+                "/t:Build",
+                "/p:Configuration=Release",
+                "/p:Platform=x64",
+                "/p:RevitYearArg=2020",
+                "/property:GenerateFullPaths=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        { // build for revit 2020 debug
+            "label": "b2020d",
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
+                "-r",
+                "/v:q",
+                "Build.csproj",
+                "/t:Build",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64",
+                "/p:RevitYearArg=2020",
+                "/property:GenerateFullPaths=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        { // build for revit 2020 
+            "label": "b2021",
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": [
+                "-r",
+                "/v:q",
+                "Build.csproj",
+                "/t:Build",
+                "/p:Configuration=Release",
+                "/p:Platform=x64",
+                "/p:RevitYearArg=2021",
+                "/property:GenerateFullPaths=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "MasterBuild Release",
+            "dependsOn": ["b2018", "b2019", "b2020r", "b2021" ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+            },
+            "presentation": {
+                "reveal": "always",
+                "echo": true,
+                "focus": false,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "MasterBuild Debug",
+            "dependsOn": ["b2018", "b2019", "b2020d", "b2021" ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+            },
+            "presentation": {
+                "reveal": "always",
+                "echo": true,
+                "focus": false,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+    ]
+}
